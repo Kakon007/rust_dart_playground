@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 notify = "5.1.0"
 rand = "0.8.4"
+fs_extra = "1.3.0"
