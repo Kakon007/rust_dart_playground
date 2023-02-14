@@ -1,9 +1,7 @@
-extern crate notify;
-
-use std::time::Duration;
-use std::path::Path;
-use notify::{RecommendedWatcher, RecursiveMode, Result, recommended_watcher, Watcher};
-use std::thread;
+// // use std::{time::Duration, fs};
+// use std::{path::Path, fs};
+// // use notify::{RecommendedWatcher, RecursiveMode, Result, recommended_watcher, Watcher};
+// // use std::thread;
 
 
 
@@ -24,19 +22,41 @@ use std::thread;
 //     }
 // }
 
-fn main() -> Result<()> {
-    // Automatically select the best implementation for your platform.
-    let mut watcher: RecommendedWatcher = recommended_watcher(|res| {
-        match res {
-           Ok(event) => println!("event: {:?}", event),
-           Err(e) => println!("watch error: {:?}", e),
-        }
-    })?;
+// fn main() -> Result<()> {
+//     // Automatically select the best implementation for your platform.
+//     let mut watcher: RecommendedWatcher = recommended_watcher(|res| {
+//         match res {
+//            Ok(event) => println!("event: {:?}", event),
+//            Err(e) => println!("watch error: {:?}", e),
+//         }
+//     })?;
 
-    // Add a path to be watched. All files and directories at that path and
-    // below will be monitored for changes.
-    watcher.watch(Path::new("/home/jahid007/rust_play_folder/Jahid"), RecursiveMode::Recursive)?;
+//     watcher.watch(Path::new("/home/jahid007/rust_play_folder/Jahid"), RecursiveMode::Recursive)?;
 
-    thread::sleep(Duration::from_secs(10));
-    Ok(())
+//     thread::sleep(Duration::from_secs(10));
+//     Ok(())
+// }
+
+use std::io;
+use rand::Rng;
+
+fn main() {
+    println!("Guess the number!");
+
+    
+
+    println!("Please input your guess.");
+
+    let mut guess = String::new();
+    io::stdin()
+    .read_line(&mut guess)
+    .expect("Failed to read line");
+
+    let secret_number = rand::thread_rng().gen_range(1..=100);
+
+    println!("The secret number is: {secret_number}");
+
+   
+
+    println!("You guessed: {guess}");
 }
