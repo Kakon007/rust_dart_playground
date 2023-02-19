@@ -137,23 +137,117 @@ fn watch<P: AsRef<Path>>(path: P) -> notify::Result<()> {
 }
 
 fn handle_event(event: &notify::Event) -> notify::Result<()> {
-    // let id = SystemTime::now()
+    // let _id = SystemTime::now()
     //     .duration_since(SystemTime::UNIX_EPOCH)
     //     .unwrap()
     //     .as_millis();
-    // Path::new(&event.paths[0].to_str().unwrap()).file_name().unwrap().to_str().unwrap();
+    Path::new(&event.paths[0].to_str().unwrap()).file_name().unwrap().to_str().unwrap();
     if event.kind.is_create() {
         println!("File createds {}: File createds", Path::new(&event.paths[0].to_str().unwrap()).to_path_buf().to_str().unwrap());
     } else if event.kind.is_modify() {
         println!("File modifieds {}: File modifieds", Path::new(&event.paths[0].to_str().unwrap()).to_path_buf().to_str().unwrap());
     } else if event.kind.is_remove() {
         println!("File removeds {}: File removeds", Path::new(&event.paths[0].to_str().unwrap()).to_path_buf().to_str().unwrap());
-    } else if event.kind.is_access() {
+    } else if event.kind.is_other() {
         println!("File accesseds {}: File accesseds", Path::new(&event.paths[0].to_str().unwrap()).to_path_buf().to_str().unwrap());
     } else {
         println!("Other events {}: Other events", Path::new(&event.paths[0].to_str().unwrap()).to_path_buf().to_str().unwrap());
     }
-   // println!("JBL2 {:?}", event);
+    println!("JBL2 {:?}", event);
 
     Ok(())
 }
+
+
+
+
+// use notify::{RecommendedWatcher, RecursiveMode, Result, Watcher, Config};
+// use std::path::Path;
+// use std::sync::mpsc::channel;
+
+
+// fn watch_folder<P: AsRef<Path>>(path: P) -> notify::Result<()> {
+//     let (tx, rx) = channel();
+//     let mut watcher: RecommendedWatcher = Watcher::new(tx, Config::default())?;
+//     watcher.watch(path.as_ref(), RecursiveMode::Recursive)?;
+
+//     loop {
+//         match rx.recv() {
+//             Ok(event) => println!("{:?}", event),
+//             Err(e) => println!("watch error: {:?}", e),
+//         }
+//     }
+// }
+
+// fn main() -> Result<()> {
+//     watch_folder("/home/jahid007/rust_play_folder/Jahid")?;
+//     Ok(())
+// }
+
+
+// use std::{path::Path, time::Duration};
+
+// use notify::{RecursiveMode};
+// use notify_debouncer_mini::new_debouncer;
+
+// /// Example for debouncer
+// fn main() {
+//     // emit some events by changing a file
+//     std::thread::spawn(|| {
+//         let path = Path::new("test.txt");
+//         let _ = std::fs::remove_file(&path);
+//         loop {
+//             std::fs::write(&path, b"Lorem ipsum").unwrap();
+//             std::thread::sleep(Duration::from_millis(250));
+//         }
+//     });
+
+//     // setup debouncer
+//     let (tx, rx) = std::sync::mpsc::channel();
+
+//     // No specific tickrate, max debounce time 2 seconds
+//     let mut debouncer = new_debouncer(Duration::from_secs(2), None, tx).unwrap();
+
+//     debouncer
+//         .watcher()
+//         .watch(Path::new("/home/jahid007/rust_play_folder/Jahid"), RecursiveMode::Recursive)
+//         .unwrap();
+
+//     // print all events, non returning
+//     for events in rx {
+//         for e in events {
+//             println!("{:?}", e);
+//         }
+//     }
+// }
+
+// use std::{path::Path, time::Duration};
+// use notify::*;
+
+
+// // example of detecting the recommended watcher kind
+// fn main() {
+//     let (tx, rx) = std::sync::mpsc::channel();
+//     // This example is a little bit misleading as you can just create one Config and use it for all watchers.
+//     // That way the pollwatcher specific stuff is still configured, if it should be used.
+//     let mut watcher: Box<dyn Watcher> = if RecommendedWatcher::kind() == WatcherKind::PollWatcher {
+//         // custom config for PollWatcher kind
+//         // you 
+//         let config = Config::default()
+//             .with_poll_interval(Duration::from_secs(1));
+//         Box::new(PollWatcher::new(tx, config).unwrap())
+//     } else {
+//         // use default config for everything else
+//         Box::new(RecommendedWatcher::new(tx, Config::default()).unwrap())
+//     };
+
+//     // watch some stuff
+//     watcher
+//         .watch(Path::new("/home/jahid007/rust_play_folder/Jahid"), RecursiveMode::Recursive)
+//         .unwrap();
+
+//     // just print all events, this blocks forever
+//     for e in rx {
+//         println!("{:?}", e);
+//     }
+// }
