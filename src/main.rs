@@ -61,62 +61,132 @@
 // //     fs_extra::dir::copy(from, to, &options).unwrap();
 // // }
 
-// use std::path::Path;
-// use std::fs;
-// use std::io;
-// fn main() {
-//     // let path = "/home/jahid007/rust_play_folder/Jahid";
-//     // let from = "/home/jahid007/rust_play_folder/Jahid";
-//     // let to = "/home/jahid007/rust_play_folder/jahid2";
-//    // let options = CopyOptions::new();
-//    let source = Path::new("/home/jahid007/rust_play_folder/Jahid");
-//    let destination = Path::new("/home/jahid007/rust_play_folder/jahid2");
-
-//    copy_dir(source, destination).unwrap();
-   
-// }
-
-
-
-
-// fn copy_dir(source: &Path, destination: &Path) -> io::Result<()> {
-//     if source.is_dir() {
-//         fs::create_dir_all(destination)?;
-//         for entry in fs::read_dir(source)? {
-//             let entry = entry?;
-//             let entry_path = entry.path();
-//             let dest_path = destination.join(entry.file_name());
-//             if entry_path.is_dir() {
-//                 copy_dir(&entry_path, &dest_path)?;
-//             } else {
-//                 fs::copy(&entry_path, &dest_path)?;
-//             }
-//         }
-//     } else {
-//         fs::copy(source, destination)?;
-//     }
-//     Ok(())
-// }
-
+use std::path::Path;
+use std::fs;
+use std::io;
 
 use std::sync::mpsc::channel;
 use std::thread;
-use std::{path::Path, time::SystemTime};
-
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 
 fn main() {
-    // let path = std::env::args()
-    //     .nth(1)
-    //     .expect("Argument 1 needs to be a path");
-    let path_string = "/home/jahid007/rust_play_folder/Jahid";
+   let source = Path::new("/home/jahid007/Music");
+   let destination = Path::new("/home/jahid007/ag_fsm_docs/backUp/Music");
+
+   let source_rename = Path::new("/home/jahid007/Movies");
+   let destination_rename = Path::new("/home/jahid007/Music");
+
+    let path_string = "/home/jahid007/Music/Fantastic Beasts The Secrets of Dumbledore (2022) 1080p HDRip x264 - ProLover";
     let path = Path::new(path_string);
     println!("Path: {:?}", path);
 
     if let Err(e) = watch(path) {
         println!("error: {:?}", e)
     }
+
+  // copy_dir(source, destination).unwrap();
+   //rename_dir(source_rename,destination_rename).unwrap();
+   
 }
+
+
+
+
+fn rename_dir(source: &Path, destination: &Path) -> std::io::Result<()> {
+    // Rename a file
+    fs::rename(source, destination)?;
+
+     Ok(())
+}
+
+fn copy_dir(source: &Path, destination: &Path) -> io::Result<()> {
+    if source.is_dir() {
+        fs::create_dir_all(destination)?;
+        for entry in fs::read_dir(source)? {
+            let entry = entry?;
+            let entry_path = entry.path();
+            let dest_path = destination.join(entry.file_name());
+            if entry_path.is_dir() {
+                copy_dir(&entry_path, &dest_path)?;
+            } else {
+                fs::copy(&entry_path, &dest_path)?;
+            }
+        }
+    } else {
+        fs::copy(source, destination)?;
+    }
+    Ok(())
+}
+
+
+
+
+
+
+
+
+// fn main() {
+//     let path_string = "/home/jahid007/rust_play_folder/Jahid";
+//     let path = Path::new(path_string);
+//     println!("Path: {:?}", path);
+
+//     if let Err(e) = watch(path) {
+//         println!("error: {:?}", e)
+//     }
+
+//     let event = Event {
+//     kind: notify::event::EventKind::Create(notify::event::CreateKind::Any),
+//     paths: vec!["/path/to/new/file".into()],
+//     ..Default::default()
+// };
+//  convert_event_to_file_system_event(&event);From
+//}
+
+
+
+// #[derive(Debug)]
+// enum FileSystemEvent {
+//     Create(String),
+//     Update(String),
+//     Delete(String),
+//     //Rename(String, String),
+// }
+
+// fn convert_event_to_file_system_event(event: &Event) -> Option<FileSystemEvent> {
+//     match event {
+//         Event {
+//             kind: notify::event::EventKind::Create(_),
+//             paths,
+//             ..
+//         } => Some(FileSystemEvent::Create(
+//             paths[0].to_str().unwrap().to_string(),
+//         )),
+//         Event {
+//             kind: notify::event::EventKind::Modify(_),
+//             paths,
+//             ..
+//         } => Some(FileSystemEvent::Update(
+//             paths[0].to_str().unwrap().to_string(),
+//         )),
+//         Event {
+//             kind: notify::event::EventKind::Remove(_),
+//             paths,
+//             ..
+//         } => Some(FileSystemEvent::Delete(
+//             paths[0].to_str().unwrap().to_string(),
+//         )),
+//         // Event {
+//         //     kind: notify::event::EventKind::Rename(_, _),
+//         //     paths,
+//         //     ..
+//         // } => Some(FileSystemEvent::Rename(
+//         //     paths[0].to_str().unwrap().to_string(),
+//         //     paths[1].to_str().unwrap().to_string(),
+//         // )),
+//         _ => None,
+//     }
+// }
+
 
 fn watch<P: AsRef<Path>>(path: P) -> notify::Result<()> {
     let (sp, rp) = channel();
@@ -140,7 +210,7 @@ fn handle_event(event: &notify::Event) -> notify::Result<()> {
     // let _id = SystemTime::now()
     //     .duration_since(SystemTime::UNIX_EPOCH)
     //     .unwrap()
-    //     .as_millis();
+    //     .as_millis(); 
     Path::new(&event.paths[0].to_str().unwrap()).file_name().unwrap().to_str().unwrap();
     if event.kind.is_create() {
         println!("File createds {}: File createds", Path::new(&event.paths[0].to_str().unwrap()).to_path_buf().to_str().unwrap());
@@ -153,7 +223,7 @@ fn handle_event(event: &notify::Event) -> notify::Result<()> {
     } else {
         println!("Other events {}: Other events", Path::new(&event.paths[0].to_str().unwrap()).to_path_buf().to_str().unwrap());
     }
-    println!("JBL2 {:?}", event);
+    //println!("JBL2 {:?}", event);
 
     Ok(())
 }
